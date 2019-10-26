@@ -106,7 +106,7 @@ $GDXIN GannEBGN632Data.gdx
 $LOAD d
 $GDXIN
 
-Scalar f 'shipping cost' /1000/;
+Scalar f 'shipping cost' /100/;
 
 Parameter
 c(i,j) 'Cost of shipping from j to i' ;
