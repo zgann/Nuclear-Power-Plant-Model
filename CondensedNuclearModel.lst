@@ -1,0 +1,402 @@
+GAMS 26.1.0  rf2b37b9 Released Feb  2, 2019 WEX-WEI x86 64bit/MS Windows 11/21/19 20:08:44 Page 1
+Condensed Nuclear Uranium Supply Model
+C o m p i l a t i o n
+
+
+   2   
+   3  Set
+   4  i  'Uranium Supplying Countries'  /Australia, Canada, Kazakhstan, Malawi, 
+      Namibia, Niger, Russia, SouthAfrica, Uzbekistan, UnitedStates/
+   5   
+   6  j  'U.S. Region' /West, Midwest, South, Northeast/
+   7  ;
+   8   
+   9  Parameter
+  10  a(i) 'Available uranium for sell to the United States in country i in thou
+      sands of pounds'
+  11   /  Australia        10511
+  12         Canada        16876
+  13     Kazakhstan        12032
+  14         Malawi        1514
+  15        Namibia        4603
+  16          Niger        1971
+  17         Russia        9063
+  18   SouthAfrica        1169
+  19     Uzbekistan        2540
+  20  UnitedStates        5424 /
+  21   
+  22   
+  23  b(j)  'Demand by region j in thousands of pounds'
+  24  /West        6382.617278
+  25  Midwest        12371.20571
+  26  South        24162.10885
+  27  Northeast        7640.574301
+  28  /
+  29   
+  30  p(i) ' Price set by country i per thousand pounds'
+  31  / Australia        43050
+  32  Canada        43220
+  33  Kazakhstan        39910
+  34  Malawi        41380
+  35  Namibia        44300
+  36  Niger        44120
+  37  Russia        43850
+  38  SouthAfrica        43750
+  39  Uzbekistan        39180
+  40  UnitedStates        43920 /
+  41   ;
+  42  Table d(i,j) 'Distance from i to j in'
+  43                    West          Midwest       South         Northeast
+  44  Australia        8097.64       9684.94       10239.31       10263.62
+  45  Canada              0             0              0              0
+  46  Kazakhstan       6632.6        6206.14        6453.36        5932.53
+  47  Malawi         10098.16        8558.73        8117.06        7941.78
+  48  Namibia         9675.46        8095.96        7516.39        7506.76
+  49  Niger           7378.76        5880.81        5532.96        5272.3
+  50  Russia          5157.91        5187.67        5639.11        5132.51
+  51  SouthAfrica    10274.95        8704.64        8116.44        8118.23
+  52  Uzbekistan      7043.06        6569.59        6781.54        6265.65
+  53  UnitedStates       0              0              0              0
+  54   
+  55   
+  56   
+  57   
+  58   
+  59  ;
+  60   
+  61   
+  62   
+  63  Scalar f 'shipping cost' /1000/;
+  64   
+  65  Parameter
+  66  c(i,j) 'Cost of shipping from i to j' ;
+  67       c(i,j) = f * d(i,j) ;
+  68   
+  69  Variables
+  70  x(i,j) Shipments from i to j
+  71  z      Objective fuction ;
+  72  Positive Variables x;
+  73   
+  74  Equations
+  75  cost 'costs for each plant'
+  76  supply(i) 'supply limit at country i'
+  77  demand(j) 'satisfy demand at plant i';
+  78   
+  79  cost.. z =e=  sum((i,j), (p(i)+c(i,j))*x(i,j));
+  80   
+  81  supply(i)..  sum(j, x(i,j)) =l= a(i);
+  82   
+  83  demand(j).. sum(i, x(i,j)) =g= b(j);
+  84   
+  85  Model NuclearSupply / all /;
+  86   
+  87  solve NuclearSupply using lp minimizing z;
+  88   
+  89  display x.l, x.m;
+
+
+COMPILATION TIME     =        0.000 SECONDS      3 MB  26.1.0 rf2b37b9 WEX-WEI
+GAMS 26.1.0  rf2b37b9 Released Feb  2, 2019 WEX-WEI x86 64bit/MS Windows 11/21/19 20:08:44 Page 2
+Condensed Nuclear Uranium Supply Model
+Equation Listing    SOLVE NuclearSupply Using LP From line 87
+
+
+---- cost  =E=  costs for each plant
+
+cost..  - 8140690*x(Australia,West) - 9727990*x(Australia,Midwest)
+     
+      - 10282360*x(Australia,South) - 10306670*x(Australia,Northeast)
+     
+      - 43220*x(Canada,West) - 43220*x(Canada,Midwest) - 43220*x(Canada,South)
+     
+      - 43220*x(Canada,Northeast) - 6672510*x(Kazakhstan,West)
+     
+      - 6246050*x(Kazakhstan,Midwest) - 6493270*x(Kazakhstan,South)
+     
+      - 5972440*x(Kazakhstan,Northeast) - 10139540*x(Malawi,West)
+     
+      - 8600110*x(Malawi,Midwest) - 8158440*x(Malawi,South)
+     
+      - 7983160*x(Malawi,Northeast) - 9719760*x(Namibia,West)
+     
+      - 8140260*x(Namibia,Midwest) - 7560690*x(Namibia,South)
+     
+      - 7551060*x(Namibia,Northeast) - 7422880*x(Niger,West)
+     
+      - 5924930*x(Niger,Midwest) - 5577080*x(Niger,South)
+     
+      - 5316420*x(Niger,Northeast) - 5201760*x(Russia,West)
+     
+      - 5231520*x(Russia,Midwest) - 5682960*x(Russia,South)
+     
+      - 5176360*x(Russia,Northeast) - 10318700*x(SouthAfrica,West)
+     
+      - 8748390*x(SouthAfrica,Midwest) - 8160190*x(SouthAfrica,South)
+     
+      - 8161980*x(SouthAfrica,Northeast) - 7082240*x(Uzbekistan,West)
+     
+      - 6608770*x(Uzbekistan,Midwest) - 6820720*x(Uzbekistan,South)
+     
+      - 6304830*x(Uzbekistan,Northeast) - 43920*x(UnitedStates,West)
+     
+      - 43920*x(UnitedStates,Midwest) - 43920*x(UnitedStates,South)
+     
+      - 43920*x(UnitedStates,Northeast) + z =E= 0 ; (LHS = 0)
+     
+
+---- supply  =L=  supply limit at country i
+
+supply(Australia)..  x(Australia,West) + x(Australia,Midwest)
+     
+      + x(Australia,South) + x(Australia,Northeast) =L= 10511 ; (LHS = 0)
+     
+supply(Canada)..  x(Canada,West) + x(Canada,Midwest) + x(Canada,South)
+     
+      + x(Canada,Northeast) =L= 16876 ; (LHS = 0)
+     
+supply(Kazakhstan)..  x(Kazakhstan,West) + x(Kazakhstan,Midwest)
+     
+      + x(Kazakhstan,South) + x(Kazakhstan,Northeast) =L= 12032 ; (LHS = 0)
+     
+REMAINING 7 ENTRIES SKIPPED
+
+
+---- demand  =G=  satisfy demand at plant i
+
+demand(West)..  x(Australia,West) + x(Canada,West) + x(Kazakhstan,West)
+     
+      + x(Malawi,West) + x(Namibia,West) + x(Niger,West) + x(Russia,West)
+     
+      + x(SouthAfrica,West) + x(Uzbekistan,West) + x(UnitedStates,West) =G= 
+     6382.617278 ; (LHS = 0, INFES = 6382.617278 ****)
+     
+demand(Midwest)..  x(Australia,Midwest) + x(Canada,Midwest)
+     
+      + x(Kazakhstan,Midwest) + x(Malawi,Midwest) + x(Namibia,Midwest)
+     
+      + x(Niger,Midwest) + x(Russia,Midwest) + x(SouthAfrica,Midwest)
+     
+      + x(Uzbekistan,Midwest) + x(UnitedStates,Midwest) =G= 12371.20571 ;
+     
+      (LHS = 0, INFES = 12371.20571 ****)
+     
+demand(South)..  x(Australia,South) + x(Canada,South) + x(Kazakhstan,South)
+     
+      + x(Malawi,South) + x(Namibia,South) + x(Niger,South) + x(Russia,South)
+     
+      + x(SouthAfrica,South) + x(Uzbekistan,South) + x(UnitedStates,South) =G= 
+     24162.10885 ; (LHS = 0, INFES = 24162.10885 ****)
+     
+REMAINING ENTRY SKIPPED
+
+GAMS 26.1.0  rf2b37b9 Released Feb  2, 2019 WEX-WEI x86 64bit/MS Windows 11/21/19 20:08:44 Page 3
+Condensed Nuclear Uranium Supply Model
+Column Listing      SOLVE NuclearSupply Using LP From line 87
+
+
+---- x  Shipments from i to j
+
+x(Australia,West)
+                (.LO, .L, .UP, .M = 0, 0, +INF, 0)
+  -8.140690E+6  cost
+        1       supply(Australia)
+        1       demand(West)
+
+x(Australia,Midwest)
+                (.LO, .L, .UP, .M = 0, 0, +INF, 0)
+  -9.727990E+6  cost
+        1       supply(Australia)
+        1       demand(Midwest)
+
+x(Australia,South)
+                (.LO, .L, .UP, .M = 0, 0, +INF, 0)
+  -1.028236E+7  cost
+        1       supply(Australia)
+        1       demand(South)
+
+REMAINING 37 ENTRIES SKIPPED
+
+---- z  Objective fuction
+
+z
+                (.LO, .L, .UP, .M = -INF, 0, +INF, 0)
+        1       cost
+
+GAMS 26.1.0  rf2b37b9 Released Feb  2, 2019 WEX-WEI x86 64bit/MS Windows 11/21/19 20:08:44 Page 4
+Condensed Nuclear Uranium Supply Model
+Model Statistics    SOLVE NuclearSupply Using LP From line 87
+
+
+MODEL STATISTICS
+
+BLOCKS OF EQUATIONS           3     SINGLE EQUATIONS           15
+BLOCKS OF VARIABLES           2     SINGLE VARIABLES           41
+NON ZERO ELEMENTS           121
+
+
+GENERATION TIME      =        0.031 SECONDS      4 MB  26.1.0 rf2b37b9 WEX-WEI
+
+
+EXECUTION TIME       =        0.031 SECONDS      4 MB  26.1.0 rf2b37b9 WEX-WEI
+GAMS 26.1.0  rf2b37b9 Released Feb  2, 2019 WEX-WEI x86 64bit/MS Windows 11/21/19 20:08:44 Page 5
+Condensed Nuclear Uranium Supply Model
+Solution Report     SOLVE NuclearSupply Using LP From line 87
+
+
+               S O L V E      S U M M A R Y
+
+     MODEL   NuclearSupply       OBJECTIVE  z
+     TYPE    LP                  DIRECTION  MINIMIZE
+     SOLVER  CPLEX               FROM LINE  87
+
+**** SOLVER STATUS     1 Normal Completion         
+**** MODEL STATUS      1 Optimal                   
+**** OBJECTIVE VALUE     168994175475.3860
+
+ RESOURCE USAGE, LIMIT          0.047      1000.000
+ ITERATION COUNT, LIMIT        14    2000000000
+
+IBM ILOG CPLEX   26.1.0 rf2b37b9 Released Feb 02, 2019 WEI x86 64bit/MS Window
+Cplex 12.8.0.0
+
+Space for names approximately 0.00 Mb
+Use option 'names no' to turn use of names off
+LP status(1): optimal
+Cplex Time: 0.05sec (det. 0.05 ticks)
+Optimal solution found.
+Objective : 168994175475.386017
+
+
+                       LOWER     LEVEL     UPPER    MARGINAL
+
+---- EQU cost            .         .         .        1.000      
+
+  cost  costs for each plant
+
+---- EQU supply  supply limit at country i
+
+                LOWER     LEVEL     UPPER    MARGINAL
+
+Australia        -INF       .    10511.000      .         
+Canada           -INF  16876.000 16876.000 -7.517E+6      
+Kazakhstan       -INF  12032.000 12032.000 -1.315E+6      
+Malawi           -INF       .     1514.000      .         
+Namibia          -INF   2650.506  4603.000      .         
+Niger            -INF   1971.000  1971.000 -1.984E+6      
+Russia           -INF   9063.000  9063.000 -2.329E+6      
+SouthAfrica      -INF       .     1169.000      .         
+Uzbekistan       -INF   2540.000  2540.000 -9.823E+5      
+UnitedStates     -INF   5424.000  5424.000 -7.517E+6      
+
+---- EQU demand  satisfy demand at plant i
+
+             LOWER     LEVEL     UPPER    MARGINAL
+
+West       6382.617  6382.617     +INF  7.5309E+6      
+Midwest   12371.206 12371.206     +INF  7.5607E+6      
+South     24162.109 24162.109     +INF  7.5607E+6      
+Northeast  7640.574  7640.574     +INF  7.2871E+6      
+
+---- VAR x  Shipments from i to j
+
+                          LOWER     LEVEL     UPPER    MARGINAL
+
+Australia   .West           .         .        +INF  6.0976E+5      
+Australia   .Midwest        .         .        +INF  2.1673E+6      
+Australia   .South          .         .        +INF  2.7217E+6      
+Australia   .Northeast      .         .        +INF  3.0196E+6      
+Canada      .West           .         .        +INF  29760.000      
+Canada      .Midwest        .         .        +INF       EPS       
+Canada      .South          .    16876.000     +INF       .         
+Canada      .Northeast      .         .        +INF  2.7361E+5      
+Kazakhstan  .West           .         .        +INF  4.5622E+5      
+Kazakhstan  .Midwest        .     6931.426     +INF       .         
+Kazakhstan  .South          .         .        +INF  2.4722E+5      
+Kazakhstan  .Northeast      .     5100.574     +INF       .         
+Malawi      .West           .         .        +INF  2.6086E+6      
+Malawi      .Midwest        .         .        +INF  1.0394E+6      
+Malawi      .South          .         .        +INF  5.9775E+5      
+Malawi      .Northeast      .         .        +INF  6.9608E+5      
+Namibia     .West           .         .        +INF  2.1888E+6      
+Namibia     .Midwest        .         .        +INF  5.7957E+5      
+Namibia     .South          .     2650.506     +INF       .         
+Namibia     .Northeast      .         .        +INF  2.6398E+5      
+Niger       .West           .         .        +INF  1.8756E+6      
+Niger       .Midwest        .         .        +INF  3.4785E+5      
+Niger       .South          .     1971.000     +INF       .         
+Niger       .Northeast      .         .        +INF  12950.000      
+Russia      .West           .     6382.617     +INF       .         
+Russia      .Midwest        .     2680.383     +INF       .         
+Russia      .South          .         .        +INF  4.5144E+5      
+Russia      .Northeast      .         .        +INF  2.1845E+5      
+SouthAfrica .West           .         .        +INF  2.7878E+6      
+SouthAfrica .Midwest        .         .        +INF  1.1877E+6      
+SouthAfrica .South          .         .        +INF  5.9950E+5      
+SouthAfrica .Northeast      .         .        +INF  8.7490E+5      
+Uzbekistan  .West           .         .        +INF  5.3356E+5      
+Uzbekistan  .Midwest        .         .        +INF  30330.000      
+Uzbekistan  .South          .         .        +INF  2.4228E+5      
+Uzbekistan  .Northeast      .     2540.000     +INF       .         
+UnitedStates.West           .         .        +INF  29760.000      
+UnitedStates.Midwest        .     2759.397     +INF       .         
+UnitedStates.South          .     2664.603     +INF       .         
+UnitedStates.Northeast      .         .        +INF  2.7361E+5      
+
+                       LOWER     LEVEL     UPPER    MARGINAL
+
+---- VAR z              -INF  1.690E+11     +INF       .         
+
+  z  Objective fuction
+
+
+**** REPORT SUMMARY :        0     NONOPT
+                             0 INFEASIBLE
+                             0  UNBOUNDED
+GAMS 26.1.0  rf2b37b9 Released Feb  2, 2019 WEX-WEI x86 64bit/MS Windows 11/21/19 20:08:44 Page 6
+Condensed Nuclear Uranium Supply Model
+E x e c u t i o n
+
+
+----     89 VARIABLE x.L  Shipments from i to j
+
+                    West     Midwest       South   Northeast
+
+Canada                                 16876.000
+Kazakhstan                  6931.426                5100.574
+Namibia                                 2650.506
+Niger                                   1971.000
+Russia          6382.617    2680.383
+Uzbekistan                                          2540.000
+UnitedStates                2759.397    2664.603
+
+
+----     89 VARIABLE x.M  Shipments from i to j
+
+                    West     Midwest       South   Northeast
+
+Australia     609760.000 2167300.000 2721670.000 3019590.000
+Canada         29760.000         EPS              273610.000
+Kazakhstan    456220.000              247220.000
+Malawi       2608610.000 1039420.000  597750.000  696080.000
+Namibia      2188830.000  579570.000              263980.000
+Niger        1875560.000  347850.000               12950.000
+Russia                                451440.000  218450.000
+SouthAfrica  2787770.000 1187700.000  599500.000  874900.000
+Uzbekistan    533560.000   30330.000  242280.000
+UnitedStates   29760.000                          273610.000
+
+
+
+EXECUTION TIME       =        0.000 SECONDS      3 MB  26.1.0 rf2b37b9 WEX-WEI
+
+
+USER: GAMS Development Corporation, USA              G871201/0000CA-ANY
+      Free Demo, +1 202-342-0180, support@gams.com, www.gams.com DC0000
+
+
+**** FILE SUMMARY
+
+Input      C:\Users\zachd\OneDrive\Documents\gamsdir\projdir\CondensedNuclearMod
+           el.gms
+Output     C:\Users\zachd\OneDrive\Documents\gamsdir\projdir\CondensedNuclearMod
+           el.lst
